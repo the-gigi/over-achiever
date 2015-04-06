@@ -6,7 +6,7 @@ from over_achiever.api import create_app
 import over_achiever.models as m
 
 
-class ServerTest(TestCase):
+class OverAchieverTest(TestCase):
     def setUp(self):
         self.app = create_app()
         self.session = create_mem_db(metadata, self.app.db)
