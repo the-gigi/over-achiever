@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-import time
 import json
 from unittest import TestCase
 from test_util import create_mem_db
