@@ -1,11 +1,22 @@
 from datetime import datetime
-from flask_restful import Resource
+
+from flask import session
+from flask_restful import Resource, abort
 from flask_restful.reqparse import RequestParser
 
 import models as m
 
 
 db = None
+github = None
+
+
+def _get_session():
+    return db.session
+
+
+def _get_query():
+    return _get_session().query
 
 
 class User(Resource):
@@ -38,56 +49,73 @@ def _get_goal_tree(q, user, goal=None):
     return result
 
 
+def _get_user():
+    """Get the user object or create it based on the token in the session
+
+    If there is no access token abort with 401 message
+    """
+    if 'github_token' not in session:
+        abort(401, message='Access Denied!')
+
+    user_data = github.get('user').data
+    email = user_data['email']
+    name = user_data['name']
+    q = _get_query()
+    user = q(m.User).filter_by(email=email).scalar()
+    if not user:
+        user = m.User(email=email, name=name)
+        s = _get_session()
+        s.add(user)
+
+    return user
+
 class Goal(Resource):
     def get(self):
-        """Get all goals organized by user and in hierarchy"""
-        q = db.session.query
-        result = {}
-        users = q(m.User).all()
-        for u in users:
-            result[u.name] = _get_goal_tree(q, u)
+        """Get all goals organized by user and in hierarchy
+
+        If user doesn't exist create it (with no goals)
+        """
+        user = _get_user()
+        q = _get_query()
+        result = {user.name: _get_goal_tree(q, user)}
 
         return result
 
     def post(self):
+        user = _get_user()
         parser = RequestParser()
-        parser.add_argument('user', type=str, required=True)
         parser.add_argument('name', type=str, required=True)
         parser.add_argument('parent_name', type=str)
         parser.add_argument('description', type=str, required=False)
         args = parser.parse_args()
 
         # Get a SQL Alchemy query object
-        q = db.session.query
+        q = _get_query()
 
         # Create a new goal
-        user = q(m.User).filter_by(name=args.user).one()
 
         # Find parent goal by name
-        if args.parent_name:
-            parent = q(m.Goal).filter_by(name=args.parent_name).one()
-        else:
-            parent = None
+        parent = q(m.Goal).filter_by(name=args.parent_name).scalar()
 
         goal = m.Goal(user=user,
                       parent=parent,
                       name=args.name,
                       description=args.description)
 
-        db.session.add(goal)
-        db.session.commit()
+        s = _get_session()
+        s.add(goal)
 
     def put(self):
         """Update end time"""
+        user = _get_user()
         parser = RequestParser()
         parser.add_argument('name', type=str, required=True)
         args = parser.parse_args()
 
         # Get a SQL Alchemy query object
-        q = db.session.query
-        goal = q(m.Goal).filter_by(name=args.name).one()
+        q = _get_query()
+        goal = q(m.Goal).filter_by(user=user, name=args.name).one()
         goal.end = datetime.now()
 
-        db.session.commit()
 
 

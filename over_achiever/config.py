@@ -9,6 +9,8 @@ SECRET_KEY = 'you-will-never-guess'
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir,
                                                       'over_acheiver.db')
+SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+
 #SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
 # mail server settings

@@ -18,7 +18,6 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(64), unique=True)
     email = Column(String(120), index=True, unique=True)
-    password = Column(String(128))
 
 
 class Goal(Base):
