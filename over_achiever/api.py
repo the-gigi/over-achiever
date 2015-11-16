@@ -16,9 +16,7 @@ def create_app():
     db.create_all()
     resources.db = app.db = db
 
-    # app.secret_key = 'you-will-never-guess' # should get it from config
     oauth = OAuth(app)
-
     github = oauth.remote_app(
         'github',
         consumer_key='507e57ab372adeb8051b',
