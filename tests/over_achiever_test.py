@@ -2,7 +2,6 @@ import json
 from unittest import TestCase
 
 from over_achiever import resources
-from over_achiever.resources import db
 from test_util import create_mem_db
 from over_achiever.models import metadata
 from over_achiever.api import create_app

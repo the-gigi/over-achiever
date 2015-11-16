@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import session
+from flask import request
 from flask_restful import Resource, abort
 from flask_restful.reqparse import RequestParser
 
@@ -30,21 +30,19 @@ class User(Resource):
 def _get_goals_by_parent(q, user, parent_goal):
     return q(m.Goal).filter_by(user=user, parent=parent_goal).all()
 
-
-def _get_goal_tree(q, user, goal=None):
+def _get_goal_tree(q, user, goal, result):
     """
     :param q: query
     :param user: user model
     :param goal: parent goal
 
 
-    Populate recursively the goals array.
+    Populate recursively the goals dictionary.
     """
-    sub_goals = _get_goals_by_parent(q, user, goal)
-
-    result = {}
-    for g in sub_goals:
-        result[g.name] = _get_goal_tree(q, user, g)
+    goals = _get_goals_by_parent(q, user, goal)
+    for g in goals:
+        result[g.name] = {}
+        _get_goal_tree(q, user, g, result[g.name])
 
     return result
 
@@ -54,10 +52,11 @@ def _get_user():
 
     If there is no access token abort with 401 message
     """
-    if 'github_token' not in session:
+    if 'Access-Token' not in request.headers:
         abort(401, message='Access Denied!')
 
-    user_data = github.get('user').data
+    token = request.headers['Access-Token']
+    user_data = github.get('user', token=dict(access_token=token)).data
     email = user_data['email']
     name = user_data['name']
     q = _get_query()
@@ -69,6 +68,7 @@ def _get_user():
 
     return user
 
+
 class Goal(Resource):
     def get(self):
         """Get all goals organized by user and in hierarchy
@@ -77,7 +77,7 @@ class Goal(Resource):
         """
         user = _get_user()
         q = _get_query()
-        result = {user.name: _get_goal_tree(q, user)}
+        result = {user.name: _get_goal_tree(q, user, None, {})}
 
         return result
 
@@ -104,6 +104,7 @@ class Goal(Resource):
 
         s = _get_session()
         s.add(goal)
+        s.commit()
 
     def put(self):
         """Update end time"""

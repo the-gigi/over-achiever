@@ -70,8 +70,8 @@ def authorized():
         #     request.args['error_description']
         # )
         abort(401, message='Access denied!')
-    session['github_token'] = (resp['access_token'], '')
     user = app.github.get('user')
+    user.data['access_token'] = session['github_token'][0]
     return jsonify(user.data)
 
 
