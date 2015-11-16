@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, url_for, session, request, jsonify
+from flask import Flask, url_for, session, jsonify
 from flask.ext.oauthlib.client import OAuth
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_restful import Api, abort
@@ -21,8 +21,8 @@ def create_app():
 
     github = oauth.remote_app(
         'github',
-        consumer_key='a11a1bda412d928fb39a',
-        consumer_secret='92b7cf30bc42c49d589a10372c3f9ff3bb310037',
+        consumer_key='507e57ab372adeb8051b',
+        consumer_secret='08a7dbaa06ac16daab00fac53724ee742c8081c5',
         request_token_params={'scope': 'user:email'},
         base_url='https://api.github.com/',
         request_token_url=None,
@@ -58,6 +58,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('github_token', None)
+    return 'OK'
 
 
 @app.route('/login/authorized')
@@ -73,9 +74,6 @@ def authorized():
     user = app.github.get('user')
     return jsonify(user.data)
 
-# @app.github.tokengetter
-# def get_github_oauth_token():
-#     return session.get('github_token')
 
 if __name__ == "__main__":
     print("If you run locally, browse to localhost:5000")
