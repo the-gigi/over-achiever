@@ -72,9 +72,3 @@ def authorized():
     user.data['access_token'] = session['github_token'][0]
     return jsonify(user.data)
 
-
-if __name__ == "__main__":
-    print("If you run locally, browse to localhost:5000")
-    host = '0.0.0.0'
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host=host, port=port)
