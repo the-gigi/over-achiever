@@ -63,16 +63,21 @@ class OverAchieverTest(TestCase):
         url = '/v1.0/goals'
         response = self.test_app.get(url)
         result = json.loads(response.data)
-        expected = {'user-1':
-                        {'goal-0': {},
-                         'goal-1':
-                             {'goal-2': {},
-                              'goal-3': {
-                                'goal-4': {},
-                                'goal-5': {},
-                                'goal-6': {}}}}
+        expected = {
+            'user-1': {
+                'goal-0': {'status': 'In progress'},
+                'goal-1': {
+                    'status': 'In progress',
+                    'goal-2': {'status': 'In progress'},
+                    'goal-3': {
+                        'status': 'In progress',
+                        'goal-4': {'status': 'In progress'},
+                        'goal-5': {'status': 'In progress'},
+                        'goal-6': {'status': 'In progress'},
+                    },
+                }
+            }
         }
-
         self.assertEqual(expected, result)
 
     def test_get_goals_user_2(self):
@@ -81,7 +86,7 @@ class OverAchieverTest(TestCase):
         url = '/v1.0/goals'
         response = self.test_app.get(url)
         result = json.loads(response.data)
-        expected = {'user-2': {'goal-7': {}}}
+        expected = {'user-2': {'goal-7': {'status': 'In progress'}}}
         self.assertEqual(expected, result)
 
     def test_get_goals_user_3(self):
@@ -139,4 +144,3 @@ class OverAchieverTest(TestCase):
 
         goal = q(m.Goal).filter_by(user=user, name='goal-0').one()
         self.assertIsNotNone(goal.end)
-

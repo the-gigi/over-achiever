@@ -35,7 +35,7 @@ def create_mem_db(metadata, db):
     metadata.create_all(engine)
     original_get_engine = db.get_engine
     db.restore_engine = partial(_restore_engine, db, original_get_engine)
-    db.get_engine = lambda x, y=None: engine
+    db.get_engine = lambda x=None, y=None: engine
     session = db.create_scoped_session()
 
     return session
