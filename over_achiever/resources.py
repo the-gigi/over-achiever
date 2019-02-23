@@ -4,8 +4,7 @@ from flask import request
 from flask_restful import Resource, abort
 from flask_restful.reqparse import RequestParser
 
-import models as m
-
+from . import models as m
 
 db = None
 github = None
@@ -30,6 +29,7 @@ class User(Resource):
 def _get_goals_by_parent(q, user, parent_goal):
     return q(m.Goal).filter_by(user=user, parent=parent_goal).all()
 
+
 def _get_goal_tree(q, user, goal, result):
     """
     :param q: query
@@ -41,7 +41,7 @@ def _get_goal_tree(q, user, goal, result):
     """
     goals = _get_goals_by_parent(q, user, goal)
     for g in goals:
-        result[g.name] = {}
+        result[g.name] = dict(status='In progress' if g.end is None else 'Done')
         _get_goal_tree(q, user, g, result[g.name])
 
     return result
@@ -117,6 +117,3 @@ class Goal(Resource):
         q = _get_query()
         goal = q(m.Goal).filter_by(user=user, name=args.name).one()
         goal.end = datetime.now()
-
-
-

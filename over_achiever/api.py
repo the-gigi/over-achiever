@@ -1,12 +1,10 @@
-import os
-
 from flask import Flask, url_for, session, jsonify
-from flask.ext.oauthlib.client import OAuth
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_oauthlib.client import OAuth
+from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, abort
-import models
-import resources
-from resources import User, Goal
+from . import models
+from . import resources
+from .resources import User, Goal
 
 
 def create_app():
@@ -44,6 +42,7 @@ def create_app():
 
     return app
 
+
 app = create_app()
 
 
@@ -73,4 +72,3 @@ def authorized():
     user = app.github.get('user', token=[token])
     user.data['access_token'] = token
     return jsonify(user.data)
-
