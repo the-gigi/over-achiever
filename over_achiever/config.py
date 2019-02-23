@@ -6,12 +6,11 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 CSRF_ENABLED = True
 SECRET_KEY = 'you-will-never-guess'
 
-
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir,
-                                                      'over_acheiver.db')
+                                                      'over_achiever.db')
 SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 
-#SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
+# SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
 # mail server settings
 MAIL_SERVER = 'smtp.gmail.com'
@@ -26,7 +25,6 @@ ADMINS = ['']
 
 # pagination
 POSTS_PER_PAGE = 3
-
 
 # Enable DB query timing
 SQLALCHEMY_RECORD_QUERIES = True
