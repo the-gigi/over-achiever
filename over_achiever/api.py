@@ -48,8 +48,8 @@ app = create_app()
 
 @app.route('/login')
 def login():
-    return app.github.authorize(callback=url_for('authorized',
-                                                 _external=True))
+    callback = url_for('authorized', _external=True)
+    return app.github.authorize(callback)
 
 
 @app.route('/logout')
