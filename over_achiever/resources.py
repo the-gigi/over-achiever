@@ -57,6 +57,9 @@ def _get_user():
 
     token = request.headers['Access-Token']
     user_data = github.get('user', token=dict(access_token=token)).data
+    if 'email' not in user_data:
+        abort(401, message='Access Denied!')
+
     email = user_data['email']
     name = user_data['name']
     q = _get_query()

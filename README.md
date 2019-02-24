@@ -26,19 +26,26 @@ you must provide the access token as a header
 
 ## Getting all the goals for current user
 
+I suggest ot store the token is an environment variable:
+
+```
+export OVER_ACHIEVER_TOKEN=<the acces token>
+```
+
+
 With HTTPie:
 ```
-http http://localhost:5000/v1.0/goals "Access-Token:<the access token>"
+http http://localhost:5000/v1.0/goals "Access-Token:$OVER_ACHIEVER_TOKEN"
 ```
 
 With cURL:
 ```
-curl -H "Access-Token:<the access token>" http://localhost:5000/v1.0/goals
+curl -H "Access-Token:$OVER_ACHIEVER_TOKEN" http://localhost:5000/v1.0/goals
 ```
 
 ## Adding a goal
 With HTTPie:
 ```
-http POST http://localhost:5000/v1.0/goals "Access-Token:<the access token>" name=<goal name>
+http POST http://localhost:5000/v1.0/goals "Access-Token:OVER_ACHIEVER_TOKEN" name=<goal name>
 ```
 
